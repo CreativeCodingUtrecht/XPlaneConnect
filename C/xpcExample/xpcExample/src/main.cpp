@@ -21,7 +21,7 @@ int main()
 	printf("XPlaneConnect Example Script\n- Setting up Simulation\n");
 
 	// Open Socket
-	const char* IP = "127.0.0.1";      //IP Address of computer running X-Plane
+	const char* IP = "172.28.0.13";      //IP Address of computer running X-Plane
 	XPCSocket sock = openUDP(IP);
 	float tVal[1];
 	int tSize = 1;
@@ -31,6 +31,7 @@ int main()
 		return EXIT_FAILURE;
 	}
 
+    /*
 	// Set Location/Orientation (sendPOSI)
 	// Set Up Position Array
 	double POSI[9] = { 0.0 };
@@ -78,23 +79,111 @@ int main()
 
 	sendDATA(sock, data, 3);
 
+    */
+     
+    /*
 	// Set throttle on the player aircraft using sendCTRL
 	float CTRL[5] = { 0.0 };
 	CTRL[3] = 0.8; // Throttle
 	sendCTRL(sock, CTRL, 5, 0);
+    
+    sleep(10);
+    
+    CTRL[3] = 0;
+    sendCTRL(sock, CTRL, 5, 0);
 
 	// pauseSim
-	pauseSim(sock, 1); // Sending 1 to pause	
-	sleep(5); // Pause for 5 seconds
+//	pauseSim(sock, 1); // Sending 1 to pause
+//	sleep(5); // Pause for 5 seconds
 
 	// Unpause
-	pauseSim(sock, 0); // Sending 0 to unpause
-	printf("- Resuming Simulation\n");
+//	pauseSim(sock, 0); // Sending 0 to unpause
+//	printf("- Resuming Simulation\n");
 
 	// Simulate for 10 seconds
 	sleep(10);
+     */
 
-	// SendDREF (Landing Gear)
+    // Show outside
+//    printf("- Show outside\n");
+//    sendCOMM(sock, "sim/view/spot");
+    
+    // Show X-Camera view 1
+    printf("- Show X-Camera view 1\n");
+    sendCOMM(sock, "SRS/X-Camera/Select_View_ID_1");
+
+
+    // Set to night
+    printf("- Make it night\n"); // only writable
+    float val = 34000;
+    sendDREF(sock, "sim/time/zulu_time_sec", &val, 1);
+
+    sleep(2);
+    
+    printf("- Flare lights\n");
+    sendCOMM(sock, "FJS/Q4XP/Switches/FLARE_LIGHTS");
+    
+    sleep(1);
+    
+    printf("- Position lights\n");
+    sendCOMM(sock, "FJS/Q4XP/Switches/POSN_LIGHTS");
+    
+    sleep(1);
+
+    printf("- Taxi lights\n");
+    sendCOMM(sock, "FJS/Q4XP/Switches/TAXI_LIGHTS");
+    
+    
+    sleep (1);
+    
+    // SendCOMM (Taxi lights off)
+    printf("- Taxi lights \n");
+    sendCOMM(sock, "FJS/Q4XP/Switches/TAXI_LIGHTS");
+
+    sleep(1);
+    
+    printf("- Position lights\n");
+    sendCOMM(sock, "FJS/Q4XP/Switches/POSN_LIGHTS");
+    
+    sleep(1);
+
+    
+    printf("- Flare lights\n");
+    sendCOMM(sock, "FJS/Q4XP/Switches/FLARE_LIGHTS");
+
+    
+    sleep (2);
+    
+    // Set to noon
+    printf("- Make it noon\n");
+    val = 68000;
+    sendDREF(sock, "sim/time/zulu_time_sec", &val, 1);
+    
+    sleep(2);
+
+    // Show X-Camera view 1
+    printf("- Show X-Camera view 1\n");
+    sendCOMM(sock, "SRS/X-Camera/Momentary_Select_View_ID_1");
+
+    sleep(4);
+    
+    // Show X-Camera view 10
+    printf("- Show X-Camera view 10\n");
+    sendCOMM(sock, "SRS/X-Camera/Momentary_Select_View_ID_10");
+
+    sleep(4);
+    
+    // Show cockpit
+    printf("- Show cockpit\n");
+    sendCOMM(sock, "sim/view/track_weapon");
+
+
+    
+    
+//    sleep (10);
+    
+    /*
+    // SendDREF (Landing Gear)
 	printf("- Stowing Landing Gear\n");
 
 	const char* dref = "sim/cockpit/switches/gear_handle_status"; // Gear handle data reference
@@ -128,6 +217,7 @@ int main()
 		printf("\tERROR: Gear Stowage unsuccessful\n");
 	}
 
+    */
 	printf("---End Program---\n");
 
 	return 0;
